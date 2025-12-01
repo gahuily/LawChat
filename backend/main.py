@@ -1,4 +1,9 @@
 from fastapi import FastAPI
+from db import models
+from db.database import engine
+
+# DB 테이블 생성
+models.Base.metadata.create_all(bind=engine)
 
 # FastAPI 인스턴스 생성
 app = FastAPI(
