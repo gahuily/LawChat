@@ -1,6 +1,25 @@
 services:
+  # postgres:
+  #   image: postgres:15
+  #   container_name: postgres_lawchat
+  #   environment:
+  #     POSTGRES_DB: lawdb
+  #     POSTGRES_USER: user
+  #     POSTGRES_PASSWORD: password
+  #   volumes:
+  #     - ./db_init/init_lawdb.sql:/docker-entrypoint-initdb.d/init_lawdb.sql
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U user -d lawdb"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   networks:
+  #     - lawchat_network
   postgres:
-    image: postgres:15
+    image: pgvector/pgvector:pg15  # 또는 pg15
     container_name: postgres_lawchat
     environment:
       POSTGRES_DB: lawdb
@@ -44,6 +63,33 @@ services:
   #   networks:
   #     - lawchat_network
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    container_name: lawchat-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - lawchat_network
+
+  # 선택사항: Kibana UI를 보고 싶다면 켜기
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.3
+    container_name: lawchat-kibana
+    depends_on:
+      - elasticsearch
+    environment:
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+    ports:
+      - "5601:5601"
+    networks:
+      - lawchat_network
+
   # # Elasticsearch에 Nori 플러그인 자동 설치
   # es_setup:
   #   image: elasticsearch:8.11.0
@@ -71,10 +117,7 @@ services:
 
 volumes:
   postgres_data:
-    driver: local
-  # es_data:
-  #   driver: local
+  es_data:
 
 networks:
   lawchat_network:
-    driver: bridge

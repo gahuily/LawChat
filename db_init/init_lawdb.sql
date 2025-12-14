@@ -2,6 +2,9 @@
 -- 1) 데이터베이스 생성 (이미 있으면 에러 나므로 IF NOT EXISTS 사용 불가)
 -- CREATE DATABASE lawdb;
 
+-- pgvector 확장 활성화
+CREATE EXTENSION IF NOT EXISTS vector;
+
 -- -----------------------------------------------------------
 -- 📌 Q&A 테이블 생성
 -- -----------------------------------------------------------
@@ -23,6 +26,9 @@ CREATE TABLE IF NOT EXISTS legal_qna (
 CREATE INDEX IF NOT EXISTS idx_qna_id ON legal_qna(qna_id);
 CREATE INDEX IF NOT EXISTS idx_qna_category ON legal_qna(category);
 
+ALTER TABLE legal_qna 
+ADD COLUMN question_embedding vector(1536),
+ADD COLUMN answer_embedding vector(1536);
 
 -- -----------------------------------------------------------
 -- 📌 예시 데이터 삽입 (옵션 - 테스트 용)
