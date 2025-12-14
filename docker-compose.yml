@@ -1,0 +1,80 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_lawchat
+    environment:
+      POSTGRES_DB: lawdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./db_init/init_lawdb.sql:/docker-entrypoint-initdb.d/init_lawdb.sql
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d lawdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lawchat_network
+
+  # elasticsearch:
+  #   image: elasticsearch:8.11.0
+  #   container_name: elasticsearch_lawchat
+  #   environment:
+  #     - discovery.type=single-node
+  #     - xpack.security.enabled=false
+  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #     - bootstrap.memory_lock=true
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #   volumes:
+  #     - es_data:/usr/share/elasticsearch/data
+  #   ports:
+  #     - "9200:9200"
+  #     - "9300:9300"
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #   networks:
+  #     - lawchat_network
+
+  # # Elasticsearch에 Nori 플러그인 자동 설치
+  # es_setup:
+  #   image: elasticsearch:8.11.0
+  #   container_name: es_setup_lawchat
+  #   depends_on:
+  #     elasticsearch:
+  #       condition: service_healthy
+  #   entrypoint: >
+  #     /bin/bash -c "
+  #     echo 'Waiting for Elasticsearch to be fully ready...';
+  #     sleep 10;
+  #     echo 'Installing Nori plugin...';
+  #     if ! elasticsearch-plugin list | grep -q analysis-nori; then
+  #       elasticsearch-plugin install analysis-nori -b;
+  #       echo 'Nori plugin installed successfully';
+  #     else
+  #       echo 'Nori plugin already installed';
+  #     fi;
+  #     echo 'Setup complete!';
+  #     exit 0;
+  #     "
+  #   networks:
+  #     - lawchat_network
+  #   restart: "no"
+
+volumes:
+  postgres_data:
+    driver: local
+  # es_data:
+  #   driver: local
+
+networks:
+  lawchat_network:
+    driver: bridge

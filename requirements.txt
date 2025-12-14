@@ -1,0 +1,5 @@
+requests>=2.31.0
+datasets>=2.18.0 # 실무에서 가장 많이 쓰이는 버전
+SQLAlchemy>=2.0.0 # 2.0 버전에서 문법이 크게 바뀜
+psycopg2-binary>=2.9.9 # PostgreSQL ↔ Python 연결 드라이버
+tqdm>=4.66.0
