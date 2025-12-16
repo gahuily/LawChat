@@ -64,7 +64,7 @@ services:
   #     - lawchat_network
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
     container_name: lawchat-elasticsearch
     environment:
       - discovery.type=single-node
@@ -79,7 +79,7 @@ services:
 
   # 선택사항: Kibana UI를 보고 싶다면 켜기
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.15.3
+    image: docker.elastic.co/kibana/kibana:8.12.0
     container_name: lawchat-kibana
     depends_on:
       - elasticsearch
@@ -90,30 +90,6 @@ services:
     networks:
       - lawchat_network
 
-  # # Elasticsearch에 Nori 플러그인 자동 설치
-  # es_setup:
-  #   image: elasticsearch:8.11.0
-  #   container_name: es_setup_lawchat
-  #   depends_on:
-  #     elasticsearch:
-  #       condition: service_healthy
-  #   entrypoint: >
-  #     /bin/bash -c "
-  #     echo 'Waiting for Elasticsearch to be fully ready...';
-  #     sleep 10;
-  #     echo 'Installing Nori plugin...';
-  #     if ! elasticsearch-plugin list | grep -q analysis-nori; then
-  #       elasticsearch-plugin install analysis-nori -b;
-  #       echo 'Nori plugin installed successfully';
-  #     else
-  #       echo 'Nori plugin already installed';
-  #     fi;
-  #     echo 'Setup complete!';
-  #     exit 0;
-  #     "
-  #   networks:
-  #     - lawchat_network
-  #   restart: "no"
 
 volumes:
   postgres_data:
