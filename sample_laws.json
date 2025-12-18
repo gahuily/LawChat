@@ -1,0 +1,16 @@
+[
+  {
+    "law_id": 2001,
+    "law_name_kor": "민법",
+    "law_type": "법률",
+    "promulgation_date": "1958-02-22",
+    "enforcement_date": "1960-01-01"
+  },
+  {
+    "law_id": 2002,
+    "law_name_kor": "주택임대차보호법",
+    "law_type": "법률",
+    "promulgation_date": "1981-03-05",
+    "enforcement_date": "1981-03-05"
+  }
+]
