@@ -9,6 +9,8 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)  # 유저 이름 (중복 금지)
+    password = Column(String)
+    email = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow) # 가입 시간
 
     # 관계 설정: 유저(1) <-> 채팅기록(N)
